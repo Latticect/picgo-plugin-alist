@@ -33,11 +33,11 @@ plugin for picgo
 
 当有令牌时，插件会自动进行签名，令牌的获取位置如下图
 
-![sign_expired](.\readme\sign_expired.png)
+![sign_expired](/readme/sign_expired.png)
 
 sign过期时间是alist直链过期时间，位置如下图
 
-![sign_expired](.\readme\sign_token.png)
+![sign_expired](/readme/sign_token.png)
 
 ## 安装
 
