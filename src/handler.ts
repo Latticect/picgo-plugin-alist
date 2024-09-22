@@ -6,12 +6,13 @@ import { rmBothEndSlashes, rmEndSlashes } from './utils/index'
 import { bedName } from './config'
 import type { UserConfig } from './types'
 import { getPostOptions, getRefreshOptions, getToken } from './option'
+import { getSign } from './utils/index'
 
 export const handle = async (ctx: PicGo): Promise<PicGo> => {
   const userConfig: UserConfig = ctx.getConfig(bedName)
   if (!userConfig)
     throw new Error("Can't find uploader config")
-  let { url, uploadPath, accessPath, expireTime, expired, folderClass } = userConfig
+  let { url, uploadPath, accessPath, expireTime, expired, folderClass, signToken, signExpired } = userConfig
   const { token } = userConfig
   // 检查token是否过期
   const now = Date.now()
@@ -29,13 +30,9 @@ export const handle = async (ctx: PicGo): Promise<PicGo> => {
       ctx.saveConfig({ 'picBed.alist.expired': Date.now() + expireTime * 60 * 60 * 100 })
       ctx.log.info(`刷新token:${res.data.token}}`)
     } catch (err) {
-
-      throw new Error(`刷新token失败，${err}`)
+      throw new Error(`刷新token失败，${err.message}`)
     }
   }
-
-
-
   uploadPath = rmBothEndSlashes(uploadPath)
   if (!accessPath)
     accessPath = uploadPath
@@ -77,7 +74,15 @@ export const handle = async (ctx: PicGo): Promise<PicGo> => {
         if (res.code !== Number(200))
           throw new Error(`[请求出错]${JSON.stringify(res)}`)
 
-        imgList[i].imgUrl = `${url}/d/${uploadPath}/${imgList[i].fileName}`
+        const path = `${uploadPath}/${imgList[i].fileName}`
+        if (signToken){
+          // ctx.log.info(`[${path}],[${signToken}]`)
+          const sign = getSign(path,signToken,signExpired)
+          ctx.log.info(`[签名计算]签名计算结果：${sign}`)
+          imgList[i].imgUrl = `${url}/d/${path}?sign=${sign}`
+        }else{
+          imgList[i].imgUrl = `${url}/d/${path}`
+        }
       }
       catch (err) {
         throw new Error(`[上传操作]异常：${err.message}`)

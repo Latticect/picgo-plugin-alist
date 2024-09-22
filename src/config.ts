@@ -53,6 +53,22 @@ export const getConfig = (ctx: PicGo): IPluginConfig[] => {
       alias: '过期时间',
     },
     {
+      name: 'signToken',
+      type: 'input',
+      default: userConfig.signToken ?? "",
+      message: 'alist 令牌',
+      required: false,
+      alias: '令牌',
+    },
+    {
+      name: 'signExpired',
+      type: 'input',
+      default: userConfig.signExpired ?? "0",
+      message: '直链签名过期时间',
+      required: false,
+      alias: '签名过期时间',
+    },
+    {
       name: 'accessPath',
       type: 'input',
       default: userConfig.accessPath ?? '',

@@ -6,6 +6,8 @@ export interface UserConfig {
   uploadPath: string
   accessPath: string
   token: string
+  signToken: string
+  signExpired: number
   expireTime:number
   expired:number
   folderClass:boolean
